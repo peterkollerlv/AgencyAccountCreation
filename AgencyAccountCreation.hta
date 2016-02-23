@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<TITLE>Agency Account Creation</TITLE>
+<HTA:APPLICATION ID="AAC"
+	APPLICATIONNAME="AgencyAccountCreation"
+	APPLICATION="yes"
+    BORDER="thick"
+	BORDERSTYLE="complex"
+    INNERBORDER="no"
+    SCROLL="auto" 
+    SCROLLFLAT="no"
+    CAPTION="yes"    
+    SHOWINTASKBAR="yes"
+    SINGLEINSTANCE="yes"
+    SYSMENU="yes"
+    NAVIGABLE="yes"
+    WINDOWSTATE="normal">
+<meta http-equiv="x-ua-compatible" content="IE=EmulateIE9">
+<script language='javascript' type='text/javascript'>
+// Agency account creation javascript
+window.resizeTo(1260,940)
+var newUserCount = null;
+var haltProcess = null;
+var errorReason = null;
+var rosterCreation;
+var blankRoster;
+var newUserCountLine;
+var lineCounter;
+var submitResults;
+var numberOfUsers;
+var errorStatement;
+var agencySelection = 'Select';
+var createSp;
+var spPwd;
+var fdrPwd;
+var fdrOpIdsTable;
+var fdrOpIdsArray;
+var fdrOpIdsCountLine;
+var agentTypeRadio;
+var agentTypeSelected;
+var casUserTableCountLine;
+var convertUserArray = [];
+var casUserArray = [];
+var rosterGlobalArray = [];
+var casUserTable;
+var casUserArrayLine;
+var fdrOpIdsArrayLine;
+var userTable;
+var agentTypeSelection;
+var fdrOpIds;
+var fdrOpIdColl;
+var agencyTagListCreation;
+var iframeLink;
+var iframeLinkSp;
+var iframeInHta;
+var iframePlaceHolder;
+var iframePlaceHolderSp;
+var iframeSp;
+var iframeSpInnerWindow;
+//var iframeNav;
+var iframeNavObject;
+var iframeSpNavObject;
+var iframeNavId;
+var casUserToValidate;
+var casUserExists;
+var loggedInToCas;
+var casSearchResultsTd;
+var tdUserExistsGlobal;
+var casUserToPass;
+var casUserArrayLength;
+var casUserArrayIndex;
+var dimBackGround;
+var fdrOpIdsArrayIndex;
+var date = new Date();
+var loginPromptVisibility;
+var casUsrNm;
+var casPwd;
+var fdrOpIdsTh;
+var readyToLaunch;
+var clickNewUserInterval;
+var fillNewUserFormInterval;
+var retrieveEmployeeIDInterval;
+var validationCounter = 0;
+var importNamesButton;
+var spUserName;
+var spPwd;
+var navSpTag;
+var searchATag;
+var spNavObj;
+var displaySpIeButton;
+var displaySpIeDivVar;
+var spTable;
+var selectedGroups;
+var spValidationCounter;
+var spLoginPromptVisibility;
+var spCheckBox;
+var casValidationStatus;
+var fdrValidationStatus;
+var spValidationStatus;
+var casCreationStatus;
+var spCreationStatus;
+var creationStatus;
+var validationStatus;
+var casCreated = 0;
+var spCreated =0;
+
+function onLoad()
+{
+rosterCreation = document.getElementById('newUserList').value = 'Copy names here in a FirstName LastName format';
+fdrOpIdsTable = document.getElementById('fdrOpIdsTable');
+fdrOpIds = document.getElementById('fdrOpIds');
+fdrOpIdsTh = document.getElementById('fdrOpIdsTh');
+readyToLaunch = document.getElementById('readyToLaunchBtn');
+//dimBackGroundFunction(true); 
+loginPromptVisibility = document.getElementById('loginToCasPrompt');
+importNamesButton = document.getElementById('importNames');
+displaySpIeButton = document.getElementById('displaySpIe');
+displaySpIeDivVar = document.getElementById('displaySpIeDiv');
+spLoginPromptVisibility = document.getElementById('logintoSpPrompt');
+blankRoster = 1;
+fdrOpIdsTable.innerHTML = '';
+displaySpIeButton.checked = false;
+displaySpIeDivVar.style.visibility = 'hidden';
+fdrOpIds.style.visibility = 'hidden';
+fdrOpIdsTh.style.visibility = 'hidden';
+readyToLaunch.style.visibility = 'hidden';
+importNamesButton.style.visibility = 'hidden';
+spLoginPromptVisibility.style.visibility = 'hidden';
+var unCheckBoxes = document.getElementsByTagName('input');
+for (var i = 0; i < unCheckBoxes.length; i++)
+{
+if(unCheckBoxes[i].type == 'checkbox' || unCheckBoxes[i].type == 'radio'  )
+{
+unCheckBoxes[i].checked = false;
+}
+}
+
+	setTimeout(function(){
+	//loginPromptVisibility.className = 'zIndexLevelFour'; //brings the login window to top
+	}, 500);
+iframeInject();
+	setTimeout(function()
+	{
+	iframeNavigation();
+	validateCasLogedIn();
+	},1000);
+}
+
+function validateCasLogedIn()
+{
+loginPromptVisibility = document.getElementById('loginToCasPrompt');
+var casLoginMsg = iframeNavObject;
+	if (iframeInHtaWindow.document.getElementById('Form1') == null)
+	{
+	iframeNavigation('lblMessage6');
+	dimBackGroundFunction(true);
+	loginPromptVisibility.className = 'zIndexLevelFour';
+	//document.getElementById('casLoginPageMessage').innerHTML = iframeNavObject.innerText; //the is an internal site the HTA unable to access it externally
+	loggedInToCas = false;
+	}
+	if (iframeInHtaWindow.document.getElementById('logon') == null)
+	{
+	dimBackGroundFunction(false);
+	loginPromptVisibility.className = 'zIndexZero';
+	loggedInToCas = true;
+	}
+}
+
+function iframeInject()
+{
+document.getElementById('displayIframe').checked = false;
+iframePlaceHolder = document.getElementById('iframePlaceHolderDiv');
+iframePlaceHolder.className = 'zIndexZero';
+iframeLink = 'http://lastest01gui/fnbmarin/AdminGroup.aspx';
+iframePlaceHolder.innerHTML = '';
+iframeInHta = document.createElement('iframe');
+iframeInHta.name = 'iframeWindow';
+iframeInHta.width = '100%';
+iframeInHta.height = '1100px';
+iframeInHta.setAttribute("style","border:none;");
+iframePlaceHolder.appendChild(iframeInHta);
+iframeInHtaWindow = window.open(iframeLink, 'iframeWindow');
+}
+
+function iframeNavigation(iframeNavObjectId)
+{
+loginPromptVisibility = document.getElementById('loginToCasPrompt');
+	if (iframeInHtaWindow.document.getElementById('Form1') == null)
+	{
+	dimBackGroundFunction(true);
+	loginPromptVisibility.className = 'zIndexLevelFour';
+	loggedInToCas = false;
+	}
+	if (iframeInHtaWindow.document.getElementById('logon') == null)
+	{
+	casUsrNm = document.getElementById('casUsrNmInput');
+	casPwd = document.getElementById('casPwdInput');
+	casUsrNm.value = '';
+	casPwd.value = '';
+	loggedInToCas = true;
+	}
+	if (iframeInHtaWindow.document.getElementById(iframeNavObjectId) != null)
+	{
+	iframeNavObject = iframeInHtaWindow.document.getElementById(iframeNavObjectId);
+	}
+}
+
+/* function alertItem()
+{
+spCred();
+openSpWindow();
+
+} */
+function dimBackGroundFunction(action)
+{
+dimBackGround = document.getElementById('dimBackGroundDiv');
+if (action == true)
+{
+dimBackGround.className = 'zIndexLevelTwo';
+}
+if (action == false)
+{
+dimBackGround.className = 'zIndexZero';
+}
+
+}
+
+function clearTextBox()
+{
+    if (blankRoster == 1)
+	{
+	rosterCreation = document.getElementById('newUserList').value = '';
+	}
+}
+function newUserListChange()
+{
+blankRoster = 0;
+}
+
+function displayIframeFunction()
+{
+iframePlaceHolder = document.getElementById('iframePlaceHolderDiv');
+	if (document.getElementById('displayIframe').checked == false)
+	{	
+		if (iframeInHta)
+		{
+		iframePlaceHolder.className = 'zIndexZero';
+		}
+	}	
+	if (document.getElementById('displayIframe').checked == true)
+	{
+		if (iframeInHta)
+		{
+		iframePlaceHolder.className = 'zIndexOne';
+		}
+	}
+}
+
+function casCred()
+{
+casUsrNm = document.getElementById('casUsrNmInput');
+casPwd = document.getElementById('casPwdInput');
+iframeNavigation('txtUsername');
+iframeNavObject.value = casUsrNm.value;
+iframeNavigation('txtPassword');
+iframeNavObject.value = casPwd.value;
+iframeNavigation('btnLogin');
+iframeNavObject.click();
+casUsrNm.value ='';
+casPwd.value ='';
+	setTimeout(function()
+	{
+	validateCasLogedIn()
+	},1000);
+}
+
+function agentType()
+{
+agencyTagListCreation = document.getElementById('agencyTagDiv');
+errorStatement = document.getElementById('errorStatementDiv');
+agencyTagListCreation.innerHTML = '';
+	if (document.getElementById('collectionSelected').checked)
+	{
+	agentTypeSelection = 'coll';
+	fdrOpIds = document.getElementById('fdrOpIds');
+	fdrOpIds.style.visibility = 'hidden';
+	fdrOpIdsTh.style.visibility = 'hidden';
+	errorStatement.innerHTML = '';
+	agentTypeSelected = document.getElementById('collectionSelected').value;
+	agencyTagListCreation.innerHTML += "Agency Tag</br>";
+	agencyTagListCreation.innerHTML += "<form id='agencyTag'>";
+	agencyTagListCreation.innerHTML += "<select class='select' id='agencyList' onchange='agencyTag()' style='width: 100%;'> "+
+	"<option value='none'>Select</option>" +
+	"<option value='29'>NRG</option>" +
+	"<option value='38'>AGS</option>" +
+	"<option value='36'>INR</option>" +
+	"<option value='7'>GCS</option>" +
+	"<option value='8'>NCO</option>" +
+	"<option value='11'>ERS</option>" +
+	"<option value='13'>ICS</option>" +
+	"<option value='17'>GKN</option>" +
+	"<option value='26'>IRM</option>" +
+	"<option value='35'>CMS</option>"+
+	"<option value='1'>C1B</option>";
+	agencyTagListCreation.innerHTML += "</select>";
+	agencyTagListCreation.innerHTML += "</form>";
+	updateFdrOpIds();
+	}
+	else if (document.getElementById('customerServiceSelected').checked)
+	{
+	fdrOpIds = document.getElementById('fdrOpIds');
+	fdrOpIdsTable = document.getElementById('fdrOpIdsTable');
+	fdrOpIdsTable.innerHTML = '';
+	fdrPwd = window.prompt('Enter Default FDR Password');
+	fdrOpIds.style.visibility = 'visible';
+	fdrOpIdsTh.style.visibility = 'visible';
+	errorStatement.innerHTML = '';
+	agentTypeSelection = 'cs';
+	agentTypeSelected = document.getElementById('customerServiceSelected').value;
+	agencyTagListCreation.innerHTML += "Agency Tag</br>";
+	agencyTagListCreation.innerHTML += "<form id='agencyTag'>";
+	agencyTagListCreation.innerHTML += "<select class='select' id='agencyList' onchange='agencyTag()' style='width: 100%;'>" +
+	"<option value='none'>Select</option>"+
+	"<option value='39'n>AEGS</option>"+
+	"<option value='30'>NCOM</option>"+
+	"<option value='37'>IENR</option>" +
+	"<option value='1'>C1B</option>";
+	agencyTagListCreation.innerHTML += "</select>";
+	agencyTagListCreation.innerHTML += "</form>";
+	updateFdrOpIds();
+	}
+}
+
+function agencyTag()
+{
+var agencyList = document.getElementById('agencyList');
+agencySelection = agencyList.options[agencyList.selectedIndex];
+}
+
+function spCheckBoxToggle()
+{
+spCheckBox = document.getElementById('spCheck');
+displaySpIeDivVar = document.getElementById('displaySpIeDiv');
+
+	if (spCheckBox.checked == true)
+	{
+	dimBackGroundFunction(true);
+	spPwd = window.prompt('Enter Default SpeedPay Password')
+	createSp = true;
+	displaySpIeDivVar.style.visibility = 'visible';
+	openSpWindow();
+	setTimeout(function(){spCred()},1000);
+	}
+	if (spCheckBox.checked == false)
+	{
+	createSp = false;
+	displaySpIeDivVar.style.visibility = 'hidden';
+	spCreationStatus = 'complete';
+	spValidationStatus = 'complete';
+		if (ie)
+		{
+		ie.Quit();
+		}
+	}
+}
+
+
+function formatTextBox()
+{
+var textBox = document.getElementById('newUserList');
+importNamesButton = document.getElementById('importNames');
+errorStatement = document.getElementById('errorStatementDiv');
+userTable = document.getElementById('userTable');
+casUserTable = document.getElementById('casTable');
+textBox.value = textBox.value.replace(/^\s*\n/gm);
+textBoxNameArray = textBox.value.split('\n');
+casUserTable.innerHTML = '';
+userTable.innerHTML = '';
+errorStatement.innerHTML='';
+casValidationStatus = '';
+fdrValidationStatus = '';
+spValidationStatus = '';
+casCreationStatus = '';
+spCreationStatus = '';
+convertUserArray= [];
+	for (var i = 0; i < textBoxNameArray.length; i++)
+	{
+		if (textBoxNameArray[i] != '')
+		{
+		var nameToConvert = textBoxNameArray[i];
+		nameToConvert = nameToConvert.match(/([^\s]+)[a-z]/ig);
+			if (nameToConvert.length < 2)
+			{
+			nameConverted = nameToConvert;
+			textBox.style.backgroundColor = '#FF8080';
+			userTable.innerHTML= '';
+			errorStatement.innerHTML = '"'+nameConverted+'"'+' is an incorrect name format in the User List.';
+			return;
+			}
+			if (nameToConvert.length == 2)
+			{
+			textBox.style.backgroundColor = '#DDEEFF';
+			nameConverted = nameToConvert[0].toUpperCase()+' '+nameToConvert[1].toUpperCase();
+			convertUserArray.push(nameConverted);
+			convertUserArray[i] = {};
+			convertUserArray[i].fN = nameToConvert[0].toUpperCase();
+			convertUserArray[i].lN = nameToConvert[1].toUpperCase();
+			errorStatement.innerHTML = '';
+			}
+		}
+	}
+	textBox.value = '';
+	for (var x = 0; x < convertUserArray.length; x++)
+	{
+	textBox.value += convertUserArray[x].fN+' '+convertUserArray[x].lN+'\n';
+	}
+buildRoster();
+}
+
+function displayUpdateRoster()
+{
+importNamesButton = document.getElementById('importNames');
+importNamesButton.style.visibility = 'visible';
+}
+
+function buildRoster() 
+{
+submitResults = document.getElementById('submitResults');
+numberOfUsers = document.getElementById('numberOfUsers');
+errorStatement = document.getElementById('errorStatementDiv');
+userTable = document.getElementById('userTable');
+casUserTable = document.getElementById('casTable');
+spCheckBox = document.getElementById('spCheck');
+document.getElementById('finalResult').innerHTML ='';
+casUserTable.innerHTML = '';
+userTable.innerHTML = '';
+casUserArray = [];
+rosterGlobalArray = [];
+haltProcess = null;
+errorReason = null;
+blankRoster = 0;
+submitResults.innerHTML = '';
+updateFdrOpIds();
+var th = userTable.createTHead();
+var thRow = th.insertRow(0);
+var thNo = thRow.insertCell(0);
+var thFn = thRow.insertCell(1);
+var thLn = thRow.insertCell(2);
+var thCasId = thRow.insertCell(3);
+var thCasExists = thRow.insertCell(4);
+var thEmpId = thRow.insertCell(5);
+var thFdrId = thRow.insertCell(6);
+var thFdrPwd = thRow.insertCell(7);
+var thFdrExists = thRow.insertCell(8);
+thFdrId.innerHTML = 'FDR OPID';
+thFdrPwd.innerHTML = 'FDR PWD';
+thFdrExists.innerHTML = 'FDR Exists';
+	if (createSp == true)
+	{
+	var thSp = thRow.insertCell(9);
+	var thSpPwd = thRow.insertCell(10);
+	var thSpExists = thRow.insertCell(11);
+	thSp.innerHTML = 'SpeedPay';
+	thSpPwd.innerHTML = 'SP Password';
+	thSpExists.innerHTML = 'SP Exists';
+	}
+	if ( createSp == false)
+	{
+	document.getElementById('spTableDiv').innerHTML = '';
+	}
+/* 	if (spCheckBox.checked == false)
+	{
+	for (var i = 0; i < rosterGlobalArray.length; i++)
+	{
+	rosterGlobalArray[i].spExists == false
+	}
+	spCreationStatus = 'complete';
+	spValidationStatus = 'complete';
+	} */
+thNo.innerHTML = '#';
+thFn.innerHTML = 'First Name';
+thLn.innerHTML = 'Last Name';
+thCasId.innerHTML = 'CAS ID';
+thCasExists.innerHTML = 'CAS Exists';
+thEmpId.innerHTML = 'Employee ID';
+lineCounter = 0;
+	if (agencySelection == 'Select')
+	{
+	errorStatement.innerHTML =  'Missing Agency Tag'
+	return;
+	}
+	for (var i = 0 ; i < convertUserArray.length; i++)
+	{
+	var fName = convertUserArray[i].fN
+	var lName = convertUserArray[i].lN
+	lineCounter++;
+	var tr = userTable.insertRow(-1);
+	var lineCounterIndication = tr.insertCell(0);
+	var tdFn = tr.insertCell(1);
+	var tdLn = tr.insertCell(2);
+	var casId = tr.insertCell(3);
+	var tdCasExists = tr.insertCell(4);
+	var empId = tr.insertCell(5);
+		if (agentTypeSelection == 'coll')
+		{
+		var tdFdrId = tr.insertCell(6);
+		var tdFdrPwd = tr.insertCell(7);
+		var tdFdrExists = tr.insertCell(8);
+		tdFdrId.innerHTML = fdrOpIdColl;
+		tdFdrPwd.innerHTML = fdrPwd;
+		tdFdrExists.innerHTML = 'N/A';
+		}
+		else if (agentTypeSelection == 'cs')
+		{
+		var tdFdrId = tr.insertCell(6);
+		var tdFdrPwd = tr.insertCell(7);
+		var tdFdrExists = tr.insertCell(8);
+		var tdFdrOpIds = fdrOpIdsArray.length;
+		var tdFdrOpIdsIndex;
+		tdFdrId.innerHTML = fdrOpIdsArray[i];
+			if (fdrOpIdsArray.length != convertUserArray.length)
+			{
+			errorStatement.innerHTML = 'The number of CAS users in User List does not match the number OP IDs. Please correct the error.';
+			return;
+			}
+		tdFdrPwd.innerHTML = fdrPwd;
+		}
+		if (createSp == true)
+		{
+		var tdSp = tr.insertCell(9);
+		var tdSpPwd = tr.insertCell(10);
+		var tdSpExists = tr.insertCell(11);
+		tdSp.innerHTML = fName+lName;
+		tdSpPwd.innerHTML = spPwd;
+		
+		}
+	lineCounterIndication.innerHTML = lineCounter;
+	tdFn.innerHTML = fName;
+	tdLn.innerHTML = lName;
+	casId.innerHTML = fName+'.'+lName+'@'+agencySelection.text;
+	empId.id = fName+'.'+lName+'@'+agencySelection.text;
+	casUserArray.push(fName+'.'+lName+'@'+agencySelection.text);
+	rosterGlobalArray[i] = {};
+	rosterGlobalArray[i].fN = fName;
+	rosterGlobalArray[i].lN = lName;
+	rosterGlobalArray[i].spID = fName+lName;
+	rosterGlobalArray[i].spPwd = spPwd;
+	rosterGlobalArray[i].agency = agencySelection.value; // this will select the value of the drop down  on the creation page
+	rosterGlobalArray[i].casID = fName+'.'+lName+'@'+agencySelection.text;
+	rosterGlobalArray[i].empId = '';
+		if (agencySelection != 'Select')
+		{
+			if (fdrOpIdColl != 'AISPHONE')
+			{
+			rosterGlobalArray[i].fdrOpId = fdrOpIdsArray[i];
+				for (var x = 0; x < convertUserArray.length; x++)
+				{
+				rosterGlobalArray[i].fdrPwd = fdrPwd;
+				}
+			}	
+			if (fdrOpIdColl == 'AISPHONE')
+			{
+				for (var x = 0; x < convertUserArray.length; x++)
+				{
+				rosterGlobalArray[i].fdrOpId = 'AISPHONE';
+				rosterGlobalArray[i].fdrPwd = 'AISMGR';
+				}
+			}
+			if (spCheckBox.checked == false)
+			{
+			rosterGlobalArray[i].spExists = false;
+			spCreationStatus = 'complete';
+			spValidationStatus = 'complete';
+			}
+		}
+	}
+	
+	if(createSp == true)
+
+	{
+	buildSpTable();
+	}
+buildCasTable();	
+userTable.className = 'casTableClass';
+thRow.className = 'casTableClassTh';
+thNo.className = 'casTableClassTh';
+thFn.className = 'casTableClassTh';
+thLn.className = 'casTableClassTh';
+thEmpId.className = 'casTableClassTh';
+thCasId.className = 'casTableClassTh';
+thCasExists.className = 'casTableClassTh';
+thFdrId.className = 'casTableClassTh';
+thFdrPwd.className = 'casTableClassTh';
+thFdrExists.className = 'casTableClassTh';
+if (document.getElementById('spCheck').checked == true)
+	{
+	thSp.className = 'casTableClassTh';
+	thSpPwd.className = 'casTableClassTh';
+	thSpExists.className = 'casTableClassTh';
+	}
+}
+
+function updateFdrOpIds()
+{
+importNamesButton = document.getElementById('importNames');
+var opIdBox = document.getElementById('fdrOpIdsTable');
+errorStatement = document.getElementById('errorStatementDiv');
+	if (agentTypeSelection == 'coll')
+	{
+	fdrOpIdColl = 'AISPHONE';
+	fdrPwd = 'AISMGR';
+	}
+	else if (agentTypeSelection == 'cs')
+	{
+		if (document.getElementById('fdrOpIdsTable') !== null)
+		{
+		fdrOpIdColl = null;
+		fdrOpIdsTable = document.getElementById('fdrOpIdsTable').value;
+		fdrOpIdsTable = fdrOpIdsTable.replace(/^\s*[\r\n]/gm, '');
+		fdrOpIdsTable = fdrOpIdsTable.replace(' ', '');
+		fdrOpIdsCountLine = fdrOpIdsTable.split('\n');
+		fdrOpIdsArray = [];
+			for (var i = 0 ; i < fdrOpIdsCountLine.length; i++)
+			{
+			fdrOpIdsArrayLine = fdrOpIdsCountLine[i];
+				if (fdrOpIdsArrayLine.length != 3)
+				{
+				opIdBox.style.backgroundColor = '#FF8080';
+				errorStatement.innerHTML = '"'+fdrOpIdsArrayLine+'"'+' is not 3 characters long.';
+				importNamesButton.style.visibility = 'hidden';
+				return;
+				}
+				else if (fdrOpIdsArrayLine.length == 3)
+				{
+				errorStatement.innerHTML = '';
+				importNamesButton.style.visibility = 'visible';
+				opIdBox.style.backgroundColor = '#DDEEFF';
+				fdrOpIdsArray.push(fdrOpIdsArrayLine);
+				}
+			}
+		fdrOpIdsArrayIndex = fdrOpIdsArray.length;
+		}	
+	}
+}
+
+function buildCasTable()
+{
+dimBackGroundFunction(true);
+casUserTable = document.getElementById('casTable');
+var th = casUserTable.createTHead();
+var thRow = th.insertRow(0);
+var thCasId = thRow.insertCell(0);
+var thAgentGroup = thRow.insertCell(1);
+var thCASHAccess = thRow.insertCell(2);
+var thCASHFeeVaiver = thRow.insertCell(3);
+var thCASHQueues = thRow.insertCell(4);
+var thBOATSAccess = thRow.insertCell(5);
+var thAAAAccess = thRow.insertCell(6);
+var thQualitySystem = thRow.insertCell(7);
+thCasId.innerHTML = 'CAS ID<br>';
+thAgentGroup.innerHTML += "Agent Group<br>";
+thAgentGroup.innerHTML += "<form id='agencyGroup'>";
+thAgentGroup.innerHTML += "<select class='select' id='agencyGroupListTH' style='width: 100%' onchange='selectAllCas(\"agencyGroupListTH\",\"agencyGroupList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='20'>CLCTR</option>" +
+"<option value='22'>CSR1</option>" +
+"<option value='46'>CSR2</option>" +
+"<option value='47'>CSR3</option>" +
+"<option value='48'>CSR4</option>" +
+"<option value='49'>CSR5</option>" +
+"<option value='50'>SUP</option>" +
+"<option value='51'>MGR</option>" +
+"<option value='1'>Admin</option>" +
+"<option value='52'>CMNDCTR</option>" +
+"<option value='66'>CSRETENTION</option>" +
+"<option value='86'>BK_USER</option>" +
+"<option value='107'>CSR1/BK1</option>" +
+"<option value='12''>CASAdmin/BK1</option>" +
+"<option value='166'>PRESIDENTIAL</option>" +
+"<option value='209'>TSSUP</option>" +
+"<option value='187'>LiveOp</option>" +
+"<option value='211'>TSWRK</option>" +
+"<option value='213'>TSMGR</option>" +
+"<option value='207'>TSREP</option>" +
+"<option value='53'>OFCR</option>"; 
+thAgentGroup.innerHTML += "</select>";
+thAgentGroup.innerHTML += "</form>";	
+thCASHAccess.innerHTML += 'CASH Access<br>';
+thCASHAccess.innerHTML += "<form id='CASHAccess'>";
+thCASHAccess.innerHTML += "<select class='select' id='CASHAccessListTH' style='width: 100%' onchange='selectAllCas(\"CASHAccessListTH\",\"CASHAccessList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='CLCTR'>Rep</option>" + 
+"<option value='SUP'>Sup</option>" + 
+"<option value='MGR'>Mgr</option>" + 
+"<option value='CMNDCTR'>Cmd Cntr</option>" + 
+"<option value='OFCR'>Officer</option>";
+thCASHAccess.innerHTML += "</select>";
+thCASHAccess.innerHTML += "</form>";
+thCASHFeeVaiver.innerHTML += 'CASH Fee Vaiver<br>';
+thCASHFeeVaiver.innerHTML += "<form id='CASHFeeVaiver'>";
+thCASHFeeVaiver.innerHTML += "<select class='select' id='CASHFeeVaiverListTH' style='width: 100%' onchange='selectAllCas(\"CASHFeeVaiverListTH\",\"CASHFeeVaiverList\")'>" +
+"<option value='none'>None</option>" +
+"<option value='COL'>Rep</option>" + 
+"<option value='SUP'>Sup</option>" + 
+"<option value='MGR'>Mgr</option>";
+thCASHFeeVaiver.innerHTML += "</select>";
+thCASHFeeVaiver.innerHTML += "</form>";
+thCASHQueues.innerHTML += 'CASH Queues<br>';
+thCASHQueues.innerHTML += "<form id='CASHQueues'>";
+thCASHQueues.innerHTML += "<select class='select' id='CASHQueuesListTH' style='width: 100%' onchange='selectAllCas(\"CASHQueuesListTH\",\"CASHQueuesList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='CollQueue Add'>Rep</option>" + 
+"<option value='CollQueue Local Sup'>Sup</option>" +
+"<option value='CollQueue Portfolio'>Portfolio</option>" +
+"<option value='CollQueue Local Sup/Portfolio'>Sup/Portfolio</option>" +
+"<option value='CollQueue Admin'>All Access</option>" +
+"<option value='CollQueue Access'>No Access</option>";
+thCASHQueues.innerHTML += "</select>";
+thCASHQueues.innerHTML += "</form>";
+thBOATSAccess.innerHTML += 'BOATS Access<br>';
+thBOATSAccess.innerHTML += "<form id='BOATSAccess'>";
+thBOATSAccess.innerHTML += "<select class='select' id='BOATSAccessListTH' style='width: 100%' onchange='selectAllCas(\"BOATSAccessListTH\",\"BOATSAccessList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='TSREP'>Rep</option>" + 
+"<option value='TSSUP'>Sup</option>" +
+"<option value='TSMGR'>Mgr</option>" +
+"<option value='CMNDCTR'>Cmd Cntr</option>" +
+"<option value='OFCR'>Officer</option>" ;
+thBOATSAccess.innerHTML += "</select>";
+thBOATSAccess.innerHTML += "</form>";
+thAAAAccess.innerHTML += 'AAA Access<br>';
+thAAAAccess.innerHTML += "<form id='AAAAccess'>";
+thAAAAccess.innerHTML += "<select class='select' id='AAAAccessListTH' style='width: 100%' onchange='selectAllCas(\"AAAAccessListTH\",\"AAAAccessList\")'>" +
+"<option value='none'>None</option>" +
+"<option value='AAA Read'>AAA Read Only</option>" + 
+"<option value='AAA Write'>AAA Read-Write</option>" +
+"<option value='AAA Write and Load'>AAA Read-Write-Load</option>";
+thAAAAccess.innerHTML += "</select>";
+thAAAAccess.innerHTML += "</form>";
+thQualitySystem.innerHTML = 'Quality System<br>';
+thQualitySystem.innerHTML += "<form id='QualitySystem'>";
+thQualitySystem.innerHTML += "<select class='select' id='QualitySystemListTH' style='width: 100%' onchange='selectAllCas(\"QualitySystemListTH\",\"QualitySystemList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='ExternalAgencyMonitor'>External Agency Monitor</option>" + 
+"<option value='Monitor'>Monitor</option>" +
+"<option value='MonitorAdministrator'>Monitor Administrator</option>" +
+"<option value='Auditor'>Auditor</option>" ;
+thQualitySystem.innerHTML += "</select>";
+thQualitySystem.innerHTML += "</form>";
+	for (var i = 0 ; i < casUserArray.length; i++)
+	{
+	var tr = casUserTable.insertRow(-1);
+	var tdCasId = tr.insertCell(0);
+	var tdAgentGroup = tr.insertCell(1);
+	var tdCASHAccess = tr.insertCell(2);
+	var tdCASHFeeVaiver = tr.insertCell(3);
+	var tdCASHQueues = tr.insertCell(4);
+	var tdBOATSAccess = tr.insertCell(5);
+	var tdAAAAccess = tr.insertCell(6);
+	var tdQualitySystem = tr.insertCell(7);
+	tdCasId.innerHTML = casUserArray[i];
+	casUserToValidate = casUserArray[i];
+	tdAgentGroup.innerHTML += "<form id='agencyGroup'>";
+	tdAgentGroup.innerHTML += "<select class='select' id='agencyGroupList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='20'>CLCTR</option>" +
+	"<option value='22'>CSR1</option>" +
+	"<option value='46'>CSR2</option>" +
+	"<option value='47'>CSR3</option>" +
+	"<option value='48'>CSR4</option>" +
+	"<option value='49'>CSR5</option>" +
+	"<option value='50'>SUP</option>" +
+	"<option value='51'>MGR</option>" +
+	"<option value='1'>Admin</option>" +
+	"<option value='52'>CMNDCTR</option>" +
+	"<option value='66'>CSRETENTION</option>" +
+	"<option value='86'>BK_USER</option>" +
+	"<option value='107'>CSR1/BK1</option>" +
+	"<option value='12''>CASAdmin/BK1</option>" +
+	"<option value='166'>PRESIDENTIAL</option>" +
+	"<option value='209'>TSSUP</option>" +
+	"<option value='187'>LiveOp</option>" +
+	"<option value='211'>TSWRK</option>" +
+	"<option value='213'>TSMGR</option>" +
+	"<option value='207'>TSREP</option>" +
+	"<option value='53'>OFCR</option>"; 
+	tdAgentGroup.innerHTML += "</select>";
+	tdAgentGroup.innerHTML += "</form>";
+	tdAgentGroup.className = 'casTableClass';
+	tdCASHAccess.innerHTML += "<form id='CASHAccess'>";
+	tdCASHAccess.innerHTML += "<select class='select' id='CASHAccessList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='CLCTR'>Rep</option>" + 
+	"<option value='SUP'>Sup</option>" + 
+	"<option value='MGR'>Mgr</option>" + 
+	"<option value='CMNDCTR'>Cmd Cntr</option>" + 
+	"<option value='OFCR'>Officer</option>";
+	tdCASHAccess.innerHTML += "</select>";
+	tdCASHAccess.innerHTML += "</form>";
+	tdCASHFeeVaiver.innerHTML += "<form id='CASHFeeVaiver'>";
+	tdCASHFeeVaiver.innerHTML += "<select class='select' id='CASHFeeVaiverList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='COL'>Rep</option>" + 
+	"<option value='SUP'>Sup</option>" + 
+	"<option value='MGR'>Mgr</option>";
+	tdCASHFeeVaiver.innerHTML += "</select>";
+	tdCASHFeeVaiver.innerHTML += "</form>";
+	tdCASHFeeVaiver.innerHTML += "</select>";
+	tdCASHFeeVaiver.innerHTML += "</form>";
+	tdCASHQueues.innerHTML += "<form id='CASHQueues'>";
+	tdCASHQueues.innerHTML += "<select class='select' id='CASHQueuesList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='CollQueue Add'>Rep</option>" + 
+	"<option value='CollQueue Local Sup'>Sup</option>" +
+	"<option value='CollQueue Portfolio'>Portfolio</option>" +
+	"<option value='CollQueue Local Sup/Portfolio'>Sup/Portfolio</option>" +
+	"<option value='CollQueue Admin'>All Access</option>" +
+	"<option value='CollQueue Access'>No Access</option>";
+	tdCASHQueues.innerHTML += "</select>";
+	tdCASHQueues.innerHTML += "</form>";
+	tdBOATSAccess.innerHTML += "<form id='BOATSAccess'>";
+	tdBOATSAccess.innerHTML += "<select class='select' id='BOATSAccessList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='TSREP'>Rep</option>" + 
+	"<option value='TSSUP'>Sup</option>" +
+	"<option value='TSMGR'>Mgr</option>" +
+	"<option value='CMNDCTR'>Cmd Cntr</option>" +
+	"<option value='OFCR'>Officer</option>" ;
+	tdBOATSAccess.innerHTML += "</select>";
+	tdBOATSAccess.innerHTML += "</form>";
+	tdAAAAccess.innerHTML += "<form id='AAAAccess'>";
+	tdAAAAccess.innerHTML += "<select class='select' id='AAAAccessList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='AAA Read'>AAA Read Only</option>" + 
+	"<option value='AAA Write'>AAA Read-Write</option>" +
+	"<option value='AAA Write and Load'>AAA Read-Write-Load</option>";
+	tdAAAAccess.innerHTML += "</select>";
+	tdAAAAccess.innerHTML += "</form>";
+	tdQualitySystem.innerHTML += "<form id='QualitySystem'>";
+	tdQualitySystem.innerHTML += "<select class='select' id='QualitySystemList' style='width: 100%'>" + 
+	"<option value='none'>None</option>" +
+	"<option value='ExternalAgencyMonitor'>External Agency Monitor</option>" + 
+	"<option value='Monitor'>Monitor</option>" +
+	"<option value='MonitorAdministrator'>Monitor Administrator</option>" +
+	"<option value='Auditor'>Auditor</option>" ;
+	tdQualitySystem.innerHTML += "</select>";
+	tdQualitySystem.innerHTML += "</form>";
+		if (i+1 == casUserArray.length)
+		{
+		casUserArrayIndex = casUserArray.length;
+		dimBackGroundFunction(true);
+		initiateCasValidation();   //This line starts the validation.
+			if (createSp == true)
+			{
+			spInitiateSearch();
+			}
+		}
+	}	
+casUserTable.className = 'casTableClass';
+thRow.className = 'casTableClassTh';
+thCasId.className = 'casTableClassTh';
+thAgentGroup.className = 'casTableClassTh';
+thCASHAccess.className = 'casTableClassTh';
+thCASHFeeVaiver.className = 'casTableClassTh';
+thCASHQueues.className = 'casTableClassTh';
+thBOATSAccess.className = 'casTableClassTh';
+thAAAAccess.className = 'casTableClassTh';
+thQualitySystem.className = 'casTableClassTh';
+
+}
+function selectAllCas(elemId,elemIdChild)
+{
+var elemIdColl = document.getElementsByTagName("*");
+var elemIdValue;
+	for (var i = 0; i < elemIdColl.length; i++)
+	{
+		if (elemIdColl[i].id == elemId)
+		{
+		elemIdValue = elemIdColl[i].value;
+		}
+	}
+	for (var i = 0; i < elemIdColl.length; i++)
+	{ 
+		if (elemIdColl[i].id == elemIdChild)
+		{
+		elemIdColl[i].value = elemIdValue; 
+		}
+	}
+}
+
+function buildSpTable()
+{
+spTable = document.getElementById('spTable');
+spTable.innerHTML = '';
+var th = spTable.createTHead();
+thRow = th.insertRow(0);
+thSpId = thRow.insertCell(0);
+thSpSiteId = thRow.insertCell(1);
+thSpUg = thRow.insertCell(2);
+thSpSecLev = thRow.insertCell(3);
+thSpId.innerHTML = "SpeedPay ID";
+thSpUg.innerHTML = "User Group";
+thSpSiteId.innerHTML = "Site ID";
+thSpSiteId.innerHTML += "<form id='spSiteIdGroup'>";
+thSpSiteId.innerHTML += "<select class='select' id='thSpSiteIdListTH' style='width: 100%' onchange='selectAllCas(\"thSpSiteIdListTH\",\"thSpSiteIdList\")'>" +
+"<option value='none'>None</option>" +
+"<option value='C1B'>C1B</option>" +
+"<option value='C2B'>C2B</option>" +
+"<option value='FNBM'>FNBM</option>" +
+"<option value='IVR'>IVR</option>" +
+"<option value='TEST'>TEST</option>" +
+"<option value='WEB'>WEB</option>";
+thSpUg.innerHTML += "</select>";
+thSpUg.innerHTML += "</form>";
+thSpUg.innerHTML += "<form id='spUserGroup'>";
+thSpUg.innerHTML += "<select class='select' id='spUserGroupListTH' style='width: 100%' onchange='selectAllCas(\"spUserGroupListTH\",\"spUserGroupList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='ASREP'>Account Services Representatives (ASREP)</option>" +
+"<option value='AGS'>AEGIS Collections (AGS)</option>" +
+"<option value='AEGS'>AEGIS Customer Service (AEGS)</option>" +
+"<option value='G020'>Agency GCS (G020)</option>" +
+"<option value='CMS1'>Capital Management Service 1 (CMS1)</option>" +
+"<option value='COB'>Credit One Account Services (COB)</option>" +
+"<option value='ERS'>ERS (ERS)</option>" +
+"<option value='ADMIN'>FNBM ADMIN (ADMIN)</option>" +
+"<option value='FRAUD'>Fraud Team - Debit Card Unmasked (FRAUD)</option>" +
+"<option value='GCSK'>GCS Knoxville (GCSK)</option>" +
+"<option value='ICS'>ICS (ICS)</option>" +
+"<option value='NRG2'>iEnergizer 30-Day (NRG2)</option>" +
+"<option value='INR1'>iEnergizer 5-Day (INR1)</option>" +
+"<option value='INERG'>IEnergizer Acct Services (INERG)</option>" +
+"<option value='WEB'>Internet Payment Settings (WEB)</option>" +
+"<option value='IRMC'>IRMC INDIA (IRMC)</option>" +
+"<option value='IVR'>IVR - DO NOT DELETE (IVR)</option>" +
+"<option value='NCO'>NCO Account Services (NCO)</option>" +
+"<option value='NCOMA'>NCO Manilla (NCOMA)</option>" +
+"<option value='PORT'>Portfolio Services (PORT)</option>" +
+"<option value='ADMN'>Speedpay Administrators (ADMN)</option>" +
+"<option value='SUPER'>Super User Group (SUPER)</option>" +
+"<option value='UNMSK'>Super Users - Debit Card Unmasked (UNMSK )</option>" +
+"<option value='SUP'>Supervisors (SUP)</option>" +
+"<option value='SPRS'>Suppression Group (SPRS)</option>" +
+"<option value='DB'>Team Bacarella (DB)</option>" +
+"<option value='GJ'>Team Jacobs (GJ)</option>" +
+"<option value='TJ'>Team Reynolds (TJ)</option>" +
+"<option value='AS'>Team Seitchik (AS)</option>" +
+"<option value='RW'>Team Walker (RW)</option>" +
+"<option value='TEST'>Test User Group (TEST)</option>" +
+"<option value='WUCSR'>WU Special Services (WUCSR)</option>" + 
+"<option value='WUSSS'>WU Special Services (WUSSS)</option>";
+thSpUg.innerHTML += "</select>";
+thSpUg.innerHTML += "</form>";
+thSpSecLev.innerHTML = "Security Level";
+thSpSecLev.innerHTML += "<form id='spSecSecLevGroup'>";
+thSpSecLev.innerHTML += "<select class='select' id='spSecSecLevGroupListTH' style='width: 100%' onchange='selectAllCas(\"spSecSecLevGroupListTH\",\"spSecSecLevGroupList\")'>" + 
+"<option value='none'>None</option>" +
+"<option value='1'>1</option>" +
+"<option value='2'>2</option>" +
+"<option value='3'>3</option>" +
+"<option value='4'>4</option>" ;
+thSpSecLev.innerHTML += "</select>";
+thSpSecLev.innerHTML += "</form>";
+
+
+for (var i = 0; i < rosterGlobalArray.length; i++)
+{
+var tr = spTable.insertRow(-1);
+var tdSpId = tr.insertCell(0);
+var tdSpSiteId = tr.insertCell(1);
+var tdSpUg = tr.insertCell(2);
+var tdSpSecLev = tr.insertCell(3);
+tdSpId.innerHTML = rosterGlobalArray[i].spID;
+tdSpSiteId.innerHTML += "<form id='spSiteIdGroup'>";
+tdSpSiteId.innerHTML += "<select class='select' id='thSpSiteIdList' style='width: 100%'>" +
+"<option value='none'>None</option>" +
+"<option value='C1B'>C1B</option>" +
+"<option value='C2B'>C2B</option>" +
+"<option value='FNBM'>FNBM</option>" +
+"<option value='IVR'>IVR</option>" +
+"<option value='TEST'>TEST</option>" +
+"<option value='WEB'>WEB</option>";
+tdSpSiteId.innerHTML += "</select>";
+tdSpSiteId.innerHTML += "</form>";
+tdSpUg.innerHTML += "<form id='spUserGroup'>";
+tdSpUg.innerHTML += "<select class='select' id='spUserGroupList' style='width: 100%'>" + 
+"<option value='none'>None</option>" +
+"<option value='ASREP'>Account Services Representatives (ASREP)</option>" +
+"<option value='AGS'>AEGIS Collections (AGS)</option>" +
+"<option value='AEGS'>AEGIS Customer Service (AEGS)</option>" +
+"<option value='G020'>Agency GCS (G020)</option>" +
+"<option value='CMS1'>Capital Management Service 1 (CMS1)</option>" +
+"<option value='COB'>Credit One Account Services (COB)</option>" +
+"<option value='ERS'>ERS (ERS)</option>" +
+"<option value='ADMIN'>FNBM ADMIN (ADMIN)</option>" +
+"<option value='FRAUD'>Fraud Team - Debit Card Unmasked (FRAUD)</option>" +
+"<option value='GCSK'>GCS Knoxville (GCSK)</option>" +
+"<option value='ICS'>ICS (ICS)</option>" +
+"<option value='NRG2'>iEnergizer 30-Day (NRG2)</option>" +
+"<option value='INR1'>iEnergizer 5-Day (INR1)</option>" +
+"<option value='INERG'>IEnergizer Acct Services (INERG)</option>" +
+"<option value='WEB'>Internet Payment Settings (WEB)</option>" +
+"<option value='IRMC'>IRMC INDIA (IRMC)</option>" +
+"<option value='IVR'>IVR - DO NOT DELETE (IVR)</option>" +
+"<option value='NCO'>NCO Account Services (NCO)</option>" +
+"<option value='NCOMA'>NCO Manilla (NCOMA)</option>" +
+"<option value='PORT'>Portfolio Services (PORT)</option>" +
+"<option value='ADMN'>Speedpay Administrators (ADMN)</option>" +
+"<option value='SUPER'>Super User Group (SUPER)</option>" +
+"<option value='UNMSK'>Super Users - Debit Card Unmasked (UNMSK )</option>" +
+"<option value='SUP'>Supervisors (SUP)</option>" +
+"<option value='SPRS'>Suppression Group (SPRS)</option>" +
+"<option value='DB'>Team Bacarella (DB)</option>" +
+"<option value='GJ'>Team Jacobs (GJ)</option>" +
+"<option value='TJ'>Team Reynolds (TJ)</option>" +
+"<option value='AS'>Team Seitchik (AS)</option>" +
+"<option value='RW'>Team Walker (RW)</option>" +
+"<option value='TEST'>Test User Group (TEST)</option>" +
+"<option value='WUCSR'>WU Special Services (WUCSR)</option>" + 
+"<option value='WUSSS'>WU Special Services (WUSSS)</option>";
+tdSpUg.innerHTML += "</select>";
+tdSpUg.innerHTML += "</form>";
+tdSpSecLev.innerHTML += "<form id='spSecSecLevGroup'>";
+tdSpSecLev.innerHTML += "<select class='select' id='spSecSecLevGroupList' style='width: 100%'>" + 
+"<option value='none'>None</option>" +
+"<option value='1'>1</option>" +
+"<option value='2'>2</option>" +
+"<option value='3'>3</option>" +
+"<option value='4'>4</option>" ;
+tdSpSecLev.innerHTML += "</select>";
+tdSpSecLev.innerHTML += "</form>";
+}
+
+
+
+
+thSpId.className = 'casTableClassTh';
+thSpSiteId.className = 'casTableClassTh';
+thSpUg.className = 'casTableClassTh';
+thSpSecLev.className = 'casTableClassTh';
+spTable.className = 'casTableClass';
+
+
+//rosterGlobalArray[0].spID;
+
+}
+
+
+function initiateCasValidation()
+{
+var userTableFeedback = document.getElementById('userTable');
+var empIdFeedback;
+	if (validationCounter == casUserArray.length)
+	{
+	iframeNavigation('chkUserId');
+	iframeNavObject.checked = false;
+	iframeNavigation('txtUserId');
+	iframeNavObject.value = '';
+	validationCounter = 0;
+	initiateFdrValidation();
+	casValidationStatus = 'complete';
+	return;
+	}
+casUserToValidate = casUserArray[validationCounter];
+iframeNavigation('chkUserId');
+iframeNavObject.checked = true;
+iframeNavigation('txtUserId');
+iframeNavObject.value = casUserToValidate;
+iframeNavigation('btnSearchAgent');
+iframeNavObject.click();
+	setTimeout(function()
+	{
+	casSearchResultsTd  = iframeInHtaWindow.document.getElementById('dgAgentSearchResults');
+	var casSearchResultsTr = casSearchResultsTd.rows;
+		if (casSearchResultsTr.length == 0)
+		{
+		rosterGlobalArray[validationCounter].casDuplicate = false;
+		}
+		if (casSearchResultsTr.length > 0)
+		{
+		rosterGlobalArray[validationCounter].casDuplicate = true;
+		empIdFeedback = casSearchResultsTd.rows[0].cells[1].innerText;
+		userTableFeedback.rows[validationCounter+1].cells[5].innerHTML = empIdFeedback;
+		}
+	validationCounter++;	
+	initiateCasValidation()
+	} ,1000);
+}
+
+function initiateFdrValidation()
+{
+fdrOpIdToValidateObject = rosterGlobalArray[validationCounter];
+	if (fdrOpIdColl != 'AISPHONE')
+	{
+		if (validationCounter == fdrOpIdsArray.length)
+		{
+		iframeNavigation('chkFDRAgentId');
+		iframeNavObject.checked = false;
+		iframeNavigation('txtFDRAgentId');
+		iframeNavObject.value = '';
+		validationCounter = 0;
+		updateUserExists();
+		fdrValidationStatus = 'complete';
+		return;
+		}
+	fdrOpIdToValidate = rosterGlobalArray[validationCounter].fdrOpId;
+	iframeNavigation('chkFDRAgentId');
+	iframeNavObject.checked = true;
+	iframeNavigation('txtFDRAgentId');
+	iframeNavObject.value = fdrOpIdToValidate;
+	iframeNavigation('btnSearchAgent');
+	iframeNavObject.click();
+	casUserToValidate = rosterGlobalArray[validationCounter].casID;
+		setTimeout(function()
+		{
+		casSearchResultsTd  = iframeInHtaWindow.document.getElementById('dgAgentSearchResults');
+		var casSearchResultsTr = casSearchResultsTd.rows;
+			if (casSearchResultsTr.length == 0)
+			{
+			rosterGlobalArray[validationCounter].opIdDuplicate = false;
+			}
+			if (casSearchResultsTr.length > 0)
+			{
+			rosterGlobalArray[validationCounter].opIdDuplicate = true;
+			
+			}
+		validationCounter++;	
+		initiateFdrValidation();
+		}, 1000);
+	}
+	else if (fdrOpIdColl == 'AISPHONE')
+	{
+	fdrValidationStatus = 'complete';
+		for (var i=0; i < rosterGlobalArray.length; i++)
+		{
+		rosterGlobalArray[i].opIdDuplicate = false;
+		}
+	updateUserExists();
+	}
+}
+function clearCasValidationInterval()
+{
+dimBackGroundFunction(false);
+/* alert('here at clear interval');
+clearInterval(validationStatus); */
+}
+
+function updateUserExists()
+{
+errorStatement = document.getElementById('errorStatementDiv');
+spCheckBox = document.getElementById('spCheck');
+errorStatement.innerHTML='';
+var userTableEmpId = document.getElementById('userTable');
+var uniqueUser = 0;
+	validationStatus = setTimeout(function(){
+	if (casValidationStatus == 'complete' && fdrValidationStatus == 'complete' &&  spValidationStatus == 'complete' )
+		{
+		clearCasValidationInterval();
+		}
+		else
+		{
+		validationStatus;
+		}
+		},1000);
+	for (var i = 0; i < rosterGlobalArray.length; i++)
+	{
+		if (rosterGlobalArray[i].casDuplicate == false && rosterGlobalArray[i].opIdDuplicate == false && rosterGlobalArray[i].spExists == false)
+		{
+		uniqueUser++;
+		}
+		if (rosterGlobalArray[i].casDuplicate == false)
+		{
+		userTableEmpId.rows[i+1].cells[4].innerHTML =  'Unique';
+		userTableEmpId.rows[i+1].cells[4].style.backgroundColor = '#66FF99';
+		userTableEmpId.rows[i+1].cells[4].className  = 'userExists';
+		}
+		if (rosterGlobalArray[i].casDuplicate == true)
+		{
+		userTableEmpId.rows[i+1].cells[4].innerHTML = 'Duplicate CAS';
+		userTableEmpId.rows[i+1].cells[4].style.backgroundColor = '#FF5050';
+		userTableEmpId.rows[i+1].cells[4].className  = 'userExists';
+		readyToLaunch = document.getElementById('readyToLaunchBtn');
+		readyToLaunch.style.visibility = 'hidden';
+		errorStatement.innerHTML += 'Duplicate CAS ID found<br>';
+		}
+		if (rosterGlobalArray[i].opIdDuplicate == false)
+		{
+		userTableEmpId.rows[i+1].cells[8].innerHTML =  'Unique';
+		userTableEmpId.rows[i+1].cells[8].style.backgroundColor = '#66FF99';
+		userTableEmpId.rows[i+1].cells[8].className  = 'userExists';
+		}
+		if (rosterGlobalArray[i].opIdDuplicate == true)
+		{
+		userTableEmpId.rows[i+1].cells[8].innerHTML = 'Duplicate OP ID';
+		userTableEmpId.rows[i+1].cells[8].style.backgroundColor = '#FF5050';
+		userTableEmpId.rows[i+1].cells[8].className  = 'userExists';
+		readyToLaunch = document.getElementById('readyToLaunchBtn');
+		readyToLaunch.style.visibility = 'hidden';
+		errorStatement.innerHTML += 'Duplicate OP ID found.<br>';
+		}
+		if (spCheckBox.checked == true)
+		{
+			if (rosterGlobalArray[i].spExists == false)
+			{
+			userTableEmpId.rows[i+1].cells[11].innerHTML =  'Unique';
+			userTableEmpId.rows[i+1].cells[11].style.backgroundColor = '#66FF99';
+			userTableEmpId.rows[i+1].cells[11].className  = 'userExists';
+			}
+			if (rosterGlobalArray[i].spExists == true)
+			{
+			userTableEmpId.rows[i+1].cells[11].innerHTML = 'Duplicate SP';
+			userTableEmpId.rows[i+1].cells[11].style.backgroundColor = '#FF5050';
+			userTableEmpId.rows[i+1].cells[11].className  = 'userExists';
+			readyToLaunch = document.getElementById('readyToLaunchBtn');
+			readyToLaunch.style.visibility = 'hidden';
+			errorStatement.innerHTML += 'Duplicate SeedPay ID found<br>';
+			}
+		}	
+	}
+	if (uniqueUser == rosterGlobalArray.length)
+	{
+	readyToLaunch = document.getElementById('readyToLaunchBtn');
+	readyToLaunch.style.visibility = 'visible';
+	}	
+}
+
+function initiateCasAccountCreation()
+{
+errorStatement = document.getElementById('errorStatementDiv');
+spCheckBox = document.getElementById('spCheck');
+errorStatement.innerHTML = '';
+var casTable = document.getElementById('casTable');
+	for (var i = 0, row; row = casTable.rows[i+1]; i++)
+	{
+	var cellValueArray = [];
+		for (var j = 0, cellData; cellData = row.cells[j]; j++)
+		{
+			if (cellData.getElementsByTagName('select')[0])
+			{
+			var cellValue = cellData.getElementsByTagName('select')[0];
+			cellValueArray.push(cellValue.options[cellValue.selectedIndex].value);
+			}
+		}
+		for (var x = 0; x < cellValueArray.length; x++)
+		{
+		rosterGlobalArray[i].agentGroup = cellValueArray[0];
+		rosterGlobalArray[i].cashAccess = cellValueArray[1];
+		rosterGlobalArray[i].casFeeVaiver = cellValueArray[2];
+		rosterGlobalArray[i].cashQueues = cellValueArray[3];
+		rosterGlobalArray[i].boatsAccess = cellValueArray[4];
+		rosterGlobalArray[i].aaaAccess = cellValueArray[5];
+		rosterGlobalArray[i].qualitySystem = cellValueArray[6];
+		}
+	}
+selectedGroups = document.getElementsByTagName('select');
+var noUnselected;
+noUnselected = false;
+for (var i = 0; i < selectedGroups.length; i++)
+{
+selectedGroups[i].style.backgroundColor = '#9CD4F0';
+}
+	for (var i = 0; i < selectedGroups.length; i++)
+	{
+		if (selectedGroups[i].value == 'none')
+		{
+			if (selectedGroups[i].id == "agencyGroupListTH" || selectedGroups[i].id == "agencyGroupList" || selectedGroups[i].id == "thSpSiteIdListTH" || selectedGroups[i].id ==  "thSpSiteIdList" || selectedGroups[i].id == "spUserGroupList" || selectedGroups[i].id == "spSecSecLevGroupList" || selectedGroups[i].id == "thSpSiteIdListTH" || selectedGroups[i].id == "spUserGroupListTH" || selectedGroups[i].id == "spSecSecLevGroupListTH" )
+			{
+			errorStatement.innerHTML += selectedGroups[i].id+' is not selected propery.<br>';   // agencyGroupList
+			selectedGroups[i].style.backgroundColor = '#FF8080';
+			return;
+			}
+			else
+			{
+			noUnselected = true;
+			}
+		}
+	}
+	if (noUnselected == true)
+	{
+	dimBackGroundFunction(true);
+	createCasAccounts ();
+	if (spCheckBox.checked == true)
+		{
+		initiateSpCreation();
+		}
+	creationStatusFunction();
+	validationCounter = 0 ;
+	}
+}
+
+
+function createCasAccounts()
+{
+	if (iframeInHtaWindow.document.readyState=="complete")
+	{
+		if (validationCounter == casUserArray.length)
+		{
+		validationCounter = 0;
+		casCreationStatus = 'complete';
+		setTimeout(retrieveEmployeeID, 1000);
+		return;
+		}
+	iframeNavigation('chkUserId');
+	iframeNavObject.checked = true;
+	iframeNavigation('txtUserId');
+	iframeNavObject.value = casUserToValidate;
+	iframeNavigation('btnNewAgent');
+	iframeNavObject.click();
+	iframeInHtaWindow.document.onload = fillNewUserForm();
+	}
+	else 
+	{
+	setTimeout(createCasAccounts,250);
+	}
+}
+
+function fillNewUserForm()
+{
+	if (iframeInHtaWindow.document.readyState=="complete")
+	{
+	var i = validationCounter;
+	iframeNavigation('AdminAgent_txtUserID');
+	iframeNavigation('AdminAgent_txtUserID');
+	iframeNavObject.value = rosterGlobalArray[i].casID;
+	iframeNavigation('AdminAgent_txtFirstName');
+	iframeNavObject.value = rosterGlobalArray[i].fN;
+	iframeNavigation('AdminAgent_txtLastName');
+	iframeNavObject.value = rosterGlobalArray[i].lN;
+	iframeNavigation('AdminAgent_chkActive');
+	iframeNavObject.checked = true;
+	var yearToEmail = date.getFullYear();
+	var monthToEmail = date.getMonth();
+	var dayToEmail = date.getDate();
+		if (monthToEmail < 10)
+		{
+		monthToEmail = monthToEmail+1;
+		monthToEmail = '0'+monthToEmail.toString();
+		}
+		else
+		{
+		monthToEmail = monthToEmail+1;
+		monthToEmail = monthToEmail.toString();
+		}
+		if (dayToEmail < 10)
+		{
+		dayToEmail = '0'+dayToEmail.toString();
+		}
+		else
+		{
+		dayToEmail = dayToEmail.toString();
+		}
+	iframeNavigation('AdminAgent_txtPhone');
+	iframeNavObject.value = yearToEmail+monthToEmail+dayToEmail;
+	iframeNavigation('AdminAgent_txtFdrLogon');
+	iframeNavObject.value = rosterGlobalArray[i].fdrOpId;
+	iframeNavigation('AdminAgent_txtFdrPwd');
+	iframeNavObject.value = rosterGlobalArray[i].fdrOpId;
+	iframeNavigation('AdminAgent_ddAgencyName');
+	iframeNavObject.value = rosterGlobalArray[i].agency;
+	iframeNavigation('AdminAgent_ddAgentGroup');
+	iframeNavObject.value = rosterGlobalArray[i].agentGroup;
+		if (rosterGlobalArray[i].cashAccess != 'none')
+		{
+		iframeNavigation('AdminAgent_chkCashAccess');
+		iframeNavObject.checked = true;
+		iframeNavigation('AdminAgent_ddlCashAccess')
+		iframeNavObject.value = rosterGlobalArray[i].cashAccess;
+		}			
+		if (rosterGlobalArray[i].cashAccess != 'none')
+		{
+		iframeNavigation('AdminAgent_chkCashFeeWaiver');
+		iframeNavObject.checked = true;
+		iframeNavigation('AdminAgent_ddlCashFeeWaiver')
+		iframeNavObject.value = rosterGlobalArray[i].casFeeVaiver;
+		}			
+		if (rosterGlobalArray[i].cashAccess != 'none')
+		{
+		iframeNavigation('AdminAgent_chkQueueAccess');
+		iframeNavObject.checked = true;
+		iframeNavigation('AdminAgent_ddlQueueAccess')
+		iframeNavObject.value = rosterGlobalArray[i].cashQueues;
+		}			
+		if (rosterGlobalArray[i].cashAccess != 'none')
+		{
+		iframeNavigation('AdminAgent_chkBoatsAccess');
+		iframeNavObject.checked = true;
+		iframeNavigation('AdminAgent_ddlBoatsAccess')
+		iframeNavObject.value = rosterGlobalArray[i].boatsAccess;
+		}			
+		if (rosterGlobalArray[i].cashAccess != 'none')
+		{
+		iframeNavigation('AdminAgent_chkAAAAccess');
+		iframeNavObject.checked = true;
+		iframeNavigation('AdminAgent_ddlAAAAccess')
+		iframeNavObject.value = rosterGlobalArray[i].aaaAccess;
+		}			
+		if (rosterGlobalArray[i].cashAccess != 'none')
+		{
+		iframeNavigation('AdminAgent_chkQualityAccess');
+		iframeNavObject.checked = true;
+		iframeNavigation('AdminAgent_ddlQualityAccess')
+		iframeNavObject.value = rosterGlobalArray[i].qualitySystem;
+		}
+		//iframeNavigation('AdminAgent_cmdCancel'); //toggles if the script will create the accounts or just hit the cancel button.
+		iframeNavigation('AdminAgent_cmdSubmit');
+		var submitUser = iframeNavObject.getElementsByTagName('table');
+			for (var x = 0; x < submitUser.length; x++)
+			{
+			validationCounter++;
+			submitUser[x].click();
+			iframeInHtaWindow.document.onload = createCasAccounts();	
+			}
+		}
+		else 
+		{
+		setTimeout(fillNewUserForm,250);
+		}
+}
+
+function retrieveEmployeeID()
+{
+var userTableFeedback = document.getElementById('userTable');
+var empIdFeedback;
+		if (validationCounter == casUserArray.length)
+		{
+		validationCounter = 0;
+		iframeNavigation('chkUserId');
+		iframeNavObject.checked = false;
+		iframeNavigation('txtUserId');
+		iframeNavObject.value = '';
+		creationStatusFunction();
+			setTimeout(function()
+			{
+			//dimBackGroundFunction(false);// wait a sec before removing background dim
+			
+			},1000);
+		return;
+		}
+casUserToValidate = casUserArray[validationCounter];
+iframeNavigation('chkUserId');
+iframeNavObject.checked = true;
+iframeNavigation('txtUserId');
+iframeNavObject.value = casUserToValidate;
+iframeNavigation('btnSearchAgent');
+iframeNavObject.click();
+	setTimeout(function()
+	{
+	casSearchResultsTd  = iframeInHtaWindow.document.getElementById('dgAgentSearchResults');
+		if (casSearchResultsTd)
+		{
+		var casSearchResultsTr = casSearchResultsTd.rows;
+			if (casSearchResultsTr.length == 0)
+			{
+						userTableFeedback.rows[validationCounter+1].cells[4].innerHTML = 'Not Created';
+			userTableFeedback.rows[validationCounter+1].cells[4].className  = 'userExists';
+			userTableFeedback.rows[validationCounter+1].cells[4].style.backgroundColor = '#FF5050';
+			
+			rosterGlobalArray[validationCounter].casNewCreated = false;
+			}
+			if (casSearchResultsTr.length > 0)
+			{
+			rosterGlobalArray[validationCounter].casNewCreated = true;
+			empIdFeedback = casSearchResultsTd.rows[0].cells[1].innerText;
+			userTableFeedback.rows[validationCounter+1].cells[5].innerHTML = empIdFeedback;
+			userTableFeedback.rows[validationCounter+1].cells[4].innerHTML = 'Created';
+			userTableFeedback.rows[validationCounter+1].cells[4].className  = 'userExists';
+			userTableFeedback.rows[validationCounter+1].cells[4].style.backgroundColor = '#5290F2';
+			casCreated++;
+			}
+		}
+		else if (!casSearchResultsTd)
+		{
+		retrieveEmployeeID();
+		}
+	validationCounter++;
+	retrieveEmployeeID();
+	}, 900);
+} 
+
+
+function spCred()
+{
+spLoginPromptVisibility = document.getElementById('logintoSpPrompt');
+spUserName = document.getElementById('spUsrNmInput');
+spLoginPwd = document.getElementById('spPwdInput');
+WaitFOrLoad();
+if (ie.document.getElementsByName('FrmLogin')[0])
+ {
+ dimBackGroundFunction(true);
+ spLoginPromptVisibility.style.visibility = 'visible';
+spLoginPromptVisibility.className = 'zIndexLevelFour';
+
+
+spPageNav("username");
+spNavObj[0].value = spUserName.value;
+spPageNav("password");
+spNavObj[0].value = spLoginPwd.value;
+spPageNav("Log On");
+spNavObj[0].click();
+spUserName.value = '';
+spLoginPwd.value = '';
+WaitFOrLoad();
+var spLoginPageMessageVar = ie.document.getElementsByTagName('span');
+document.getElementById('spLoginPageMessage').innerHTML = spLoginPageMessageVar[1].innerText;
+}
+if (ie.document.getElementById('form1'))
+{
+spLogin();
+}
+
+
+}
+
+function spLogin()
+{
+WaitFOrLoad();
+if (ie.document.getElementById('form1'))
+{
+dimBackGroundFunction(false);
+spLoginPromptVisibility.style.visibility = 'hidden';
+navSpTag = ie.document.getElementsByTagName("table");
+searchATag = navSpTag(1).rows(9).cells(1).getElementsByTagName("a");
+searchATag(0).click();
+}
+
+
+
+}
+
+function spPageNav(spNav)
+{
+WaitFOrLoad();
+	if (spNav)
+	{
+	spNavObj = '';
+	spNavObj = ie.document.getElementsByName(spNav);
+	}
+}
+
+function spInitiateSearch()
+{
+WaitFOrLoad();
+	for (var i = 0; i < rosterGlobalArray.length; i++)
+	{
+	searchSpUsers(i);
+	}
+spValidationResults();
+}	
+
+function searchSpUsers(i)
+{
+
+	spPageNav("U_ID");
+	spNavObj[0].value = rosterGlobalArray[i].spID;
+	spPageNav("Go");
+	spNavObj[0].click();
+
+	spPageNav("U_ID")
+		if (spNavObj.length != 0)
+		{
+		rosterGlobalArray[i].spExists = true;
+		spPageNav("Action");
+		spNavObj[2].click();
+		return;
+		}
+		else if (spNavObj.length == 0)	
+		{
+		rosterGlobalArray[i].spExists = false;
+		spPageNav("Action");
+		spNavObj[1].click()
+		return;
+		}
+
+
+}
+
+function spValidationResults()
+{
+	for (var i = 0; i < rosterGlobalArray.length; i++)
+	{
+	spValidationStatus = 'complete';
+	updateUserExists();
+	}
+}
+
+function displaySpIeFunction()
+{
+	if (createSp == true)
+	{
+		if (document.getElementById('displaySpIe').checked == true)
+		{
+		//ie.visible = true;
+		diplaySpFront();
+		}
+		if (document.getElementById('displaySpIe').checked == false)
+		{
+		ie.visible = false;
+		}
+		if (createSp == false)
+		{
+		displaySpIeDivVar.style.visibility = 'hidden';
+		}
+	}	
+}
+
+function initiateSpCreation()
+{
+var casTable = document.getElementById('spTable');
+	for (var i = 0, row; row = casTable.rows[i+1]; i++)
+	{
+	var cellValueArray = [];
+		for (var j = 0, cellData; cellData = row.cells[j]; j++)
+		{
+			if (cellData.getElementsByTagName('select')[0])
+			{
+			var cellValue = cellData.getElementsByTagName('select')[0];
+			cellValueArray.push(cellValue.options[cellValue.selectedIndex].value);
+			}
+		}
+		for (var x = 0; x < cellValueArray.length; x++)
+		{
+		rosterGlobalArray[i].spSiteId = cellValueArray[0];
+		rosterGlobalArray[i].spUserGroup = cellValueArray[1];
+		rosterGlobalArray[i].spSecLev = cellValueArray[2];
+		}
+	}
+spPageNav("Action");
+spNavObj[2].click();
+WaitFOrLoad();
+spValidationCounter = 0;
+createSpAccounts();
+}
+
+function createSpAccounts()
+{
+	if (spValidationCounter == rosterGlobalArray.length)
+	{
+	WaitFOrLoad();
+	spPageNav("Action");
+	spNavObj[2].click();
+	WaitFOrLoad();
+	retrieveSpAccounts();
+	return;
+	}
+spPageNav("U_ID");
+spNavObj[0].value = rosterGlobalArray[spValidationCounter].spID;
+spPageNav("SITE_ID");
+spNavObj[0].value  = rosterGlobalArray[spValidationCounter].spSiteId;
+spPageNav("FNAME");
+spNavObj[0].value = rosterGlobalArray[spValidationCounter].fN;
+spPageNav("LNAME");
+spNavObj[0].value = rosterGlobalArray[spValidationCounter].lN;
+spPageNav("User_Enabled");
+spNavObj[0].checked = "checked";
+spNavObj[0].value = "1";
+spPageNav("PSSWRD");
+spNavObj[0].value = rosterGlobalArray[spValidationCounter].spPwd;
+spPageNav("FeatureM");
+spNavObj[1].checked = "checked";
+spNavObj[1].value = "";
+spPageNav("FeatureSml");
+spNavObj[0].checked = "checked";
+spNavObj[0].value = "1";
+spPageNav("Psswrd_Expires");
+spNavObj[0].checked = "checked";
+spNavObj[0].value = "1";
+spPageNav("UGRP");
+spNavObj[0].value  = rosterGlobalArray[spValidationCounter].spUserGroup;
+spPageNav("SECLVL");
+spNavObj[0].value  = rosterGlobalArray[spValidationCounter].spSecLev;
+spValidationCounter++;
+spPageNav("Action"); //creates the SP account
+spNavObj[0].click();
+WaitFOrLoad();
+spPageNav("Action");
+spNavObj[1].click();
+WaitFOrLoad();
+createSpAccounts();
+}
+
+function retrieveSpAccounts()
+{
+	for (var i = 0; i < rosterGlobalArray.length; i++)
+	{
+		if (i == rosterGlobalArray.length-1)
+		{
+		setTimeout(function(){spCreationStatus = 'complete'},2000);
+		}
+		if (i < rosterGlobalArray.length)
+		{
+		searchCreatedSpUsers(i);
+		}
+	}
+}
+
+
+function searchCreatedSpUsers(i)
+{
+var userTableFeedback = document.getElementById('userTable');
+	spPageNav("U_ID");
+	spNavObj[0].value = rosterGlobalArray[i].spID;
+	spPageNav("Go");
+	spNavObj[0].click();
+
+	spPageNav("U_ID")
+		if (spNavObj.length != 0)
+		{
+		userTableFeedback.rows[i+1].cells[11].innerHTML = 'Created';
+		userTableFeedback.rows[i+1].cells[11].className  = 'userExists';
+		userTableFeedback.rows[i+1].cells[11].style.backgroundColor = '#5290F2';
+		spCreated++;
+		spPageNav("Action");
+		spNavObj[2].click();
+		return;
+		}
+		else if (spNavObj.length == 0)	
+		{
+		userTableFeedback.rows[i+1].cells[11].innerHTML = 'Not Created';
+		userTableFeedback.rows[i+1].cells[11].className  = 'userExists';
+		userTableFeedback.rows[i+1].cells[11].style.backgroundColor = '#FF5050';
+		spPageNav("Action");
+		spNavObj[1].click()
+		return;
+		}
+
+
+}
+
+function creationStatusFunction()
+{
+
+setTimeout(function(){
+//alert('here now: CAS: '+casCreationStatus+' SP: '+spCreationStatus);
+	if (casCreationStatus == 'complete' && spCreationStatus == 'complete')
+	{
+	clearCreationInterval();
+	return;
+	}
+	else
+	{
+	creationStatusFunction();
+	}
+},1000);
+}
+
+function clearCreationInterval()
+{
+	dimBackGroundFunction(false);
+	if (document.getElementById('spCheck').checked == true)
+	{
+	document.getElementById('finalResult').innerHTML = 'Completed. Created '+casCreated+' CAS users, and '+spCreated+' SpeedPay users.';
+	}
+	if (document.getElementById('spCheck').checked == false)
+	{
+	document.getElementById('finalResult').innerHTML = 'Completed. Created '+casCreated+' CAS users.';
+	}
+}
+
+function reloadPage()
+{
+location.reload();
+}
+
+</script>
+
+<script language="VBScript"> 
+
+dim ie, navObj, navTarget, waitStartTime, idTimer, vbOut, spPageTableArray, navObjTag, navTargetTag, lenghtOfTables, searchLink, tableSearchField, searchButton, iEVisible, speedPayWindow
+
+REM On Error Resume Next
+
+
+Sub openSpWindow()
+Set ie = CreateObject("InternetExplorer.Application")
+ie.navigate "https://spfin81.speedpay.com/"
+ie.toolbar = 0
+ie.statusbar = 0
+
+Call WaitFOrLoad
+REM spLogin()
+End Sub
+
+Sub diplaySpFront()
+ie.visible = true
+Set objShell = CreateObject("WScript.Shell")
+REM msgbox (ie.document.Title)
+Call WaitFOrLoad
+speedPayWindow = ie.document.Title
+objShell.AppActivate SpeedPayWindow
+End Sub
+
+Sub WaitFOrLoad
+Do While ie.busy
+Sleep 500
+Loop
+End Sub
+
+
+Sub Sleep(MSecs) 
+Set fso = CreateObject("Scripting.FileSystemObject")
+If Fso.FileExists("sleeper.vbs")=False Then
+Set objOutputFile = fso.CreateTextFile("sleeper.vbs", True)
+objOutputFile.Write "wscript.sleep WScript.Arguments(0)"
+objOutputFile.Close
+End If
+CreateObject("WScript.Shell").Run "sleeper.vbs " & MSecs,1 , True
+End Sub
+
+
+Sub pageNav(navTarget)
+On Error Resume Next
+Set navObj = ie.document.all.item(navTarget)
+End sub
+
+Sub pageNavTag(navTargetTag)
+On Error Resume Next
+Set navObjTag = ie.document.all.tags(navTargetTag)
+End sub
+
+</script>
+
+<style>
+
+body {
+font-family: 'Verdana';
+  padding: 0;
+  margin: 0;
+  height: 901px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2D3A50;
+  text-shadow: 2px; 2px; #ff0000;
+}
+
+.zIndexZero{
+z-Index: 0;
+visibility: hidden;
+}
+
+.zIndexLevelOne{
+z-Index: 1;
+visibility: visible;
+}
+
+.zIndexLevelTwo{
+z-Index: 2;
+visibility: visible;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: #000099;
+opacity: 0.6;
+}
+
+.zIndexLevelThree{
+z-Index: 3;
+visibility: visible;
+opacity: 0.99;
+}
+
+.zIndexLevelFour{
+z-Index: 4;
+visibility: visible;
+}
+
+
+.casTableClass{
+position: relative;
+text-align: center;
+vertical-align: top;
+border-radius: 5px;
+background-color : #C9DEF0;
+box-shadow: 2px 2px 1px #888888;
+}
+
+.casTableClassTh{
+position: relative;
+text-align: center;
+vertical-align: top;
+border-radius: 5px;
+background-color : #3399FF;
+border: solid 1px;
+border-bottom: 2px solid blue;
+padding: 3px;
+box-shadow: 2px 2px 1px #888888;
+}
+
+.userExists{
+position: relative;
+text-align: center;
+border: 2;
+border-radius: 5px;
+border-color blue;
+box-shadow: 2px 2px 1px #888888;
+}
+
+.button{
+background-color: #5A93CC;
+border-radius: 5px;
+opacity: 0.85;
+font-weight: 600;
+padding: 5px;
+border: 2;
+border-color: blue;
+box-shadow: 2px 2px 1px #888888;
+}
+
+.select{
+background-color: #9CD4F0;
+border: 2;
+border-color: blue;
+border-radius: 5px;
+padding: 2px;
+display: inline-block;
+appearance:none;
+text-align: center;
+}
+
+.textarea{
+border:0px;
+border-radius:5px;
+color: #2D3A50;
+background-color:#DDEEFF;
+font-weight: 600;
+font-family: 'Verdana';
+scrollbar-arrow-color:blue;
+scrollbar-base-color: #C9DEF0;
+scrollbar-3dlight-color:#C9DEF0;
+scrollbar-highlight-color:#C9DEF0;
+scrollbar-darkshadow-color:#C9DEF0;
+scrollbar-shadow-color:#C9DEF0;
+scrollbar-track-color::#C9DEF0;
+scrollbar-face-color:#C9DEF0;
+}
+
+#casTableContainer{
+position: relative;
+}
+
+#dimBackGroundDiv{
+position: fixed;
+}
+
+#loginToCasPromptPad{
+position: fixed;
+}
+
+#loginToCasPrompt{
+position: fixed;
+top: 250px;
+/* left: 400px; */
+left:50%;
+transform:translate(-50%,0);
+width: 500px;
+height: 100px;
+background-color: #93bee2;
+border-radius: 20px;
+box-shadow: 2px 2px 1px #888888;
+text-align: center;
+}
+
+#casLoginPageMessage{
+position:absolute;
+top:50px;
+left:50%;
+transform:translate(-50%,0);
+width:80%;
+
+
+}
+
+#logintoSpPrompt{
+position: fixed;
+top: 250px;
+/* left: 400px; */
+left:50%;
+transform:translate(-50%,0);
+width: 500px;
+height: 100px;
+background-color: #93bee2;
+border-radius: 20px;
+box-shadow: 2px 2px 1px #888888;
+text-align: center;
+}
+
+#spLoginPageMessage{
+position:absolute;
+top:50px;
+left:50%;
+transform:translate(-50%,0);
+width:80%;
+}
+
+#iframePlaceHolderDiv{
+position: relative;
+text-align: center;
+}
+
+#iframeSpPlaceHolderDiv{
+background-color:blue;
+}
+
+#newUserList{
+resize:both;
+}
+
+#submitResults {
+position: relative;
+color: red;
+font-weight: bold;
+margin-left:2%;
+margin-right:2%;
+margin-top:7px;
+}
+
+#errorStatementDiv {
+position: relative;
+margin-left:2%;
+margin-right:2%;
+margin-top:0px;
+color: red;
+font-weight: bold;
+}
+
+#finalResult{
+position: relative;
+margin-left:2%;
+margin-right:2%;
+margin-top:0px;
+font-size: 22px;
+color: #3358FF;
+font-weight: bold;
+}
+
+#constructRosterDiv{
+position: relative;
+width: auto;
+top: 20px;
+margin-left:2%;
+margin-right:2%;
+}
+
+#userTable{
+position: relative;
+margin-left:2%;
+margin-right:2%;
+}
+
+#casTable{
+position: relative;
+margin-left:2%;
+margin-right:2%;
+}
+
+#spTable{
+position: relative;
+margin-left:2%;
+margin-right:2%;
+}
+
+
+#numberOfUsers{
+position: relative;
+margin-left:2%;
+margin-right:2%
+}
+
+#alertItemBtn{
+position:fixed;
+top:0;
+left:0;
+}
+
+#peter{
+position: fixed;
+bottom: 5px;
+right: 5px;
+font-size: 11px;
+opacity:0.3;
+}
+
+</style> 
+
+</head>
+
+
+<body onload='onLoad()' bgcolor="#93bee2">
+
+<div id='dimBackGroundDiv'></div>
+<div id='loginToCasPromptPad'></div>
+	<div id='loginToCasPrompt'>Please Log In to CAS<br>
+		<input type="text" name="casUsrNmInput" id="casUsrNmInput" size="20">
+		<input type="password" name="casPwdInput" id="casPwdInput" size="20">
+		<input id="submitCasPwd" class="button" type="button" value="Login to CAS" onclick="casCred()">
+		<br>
+		<div id="casLoginPageMessage"></div>
+	</div>
+		<div id='logintoSpPrompt'>Please Log In to SpeedPay<br>
+		<input type="text" name="spUsrNmInput" id="spUsrNmInput" size="20">
+		<input type="password" name="spPwdInput" id="spPwdInput" size="20">
+		<input id="submitSpPwd" type="button" class="button" value="Login to SpeedPay" onclick="spCred()">
+		<div id="spLoginPageMessage"></div>
+	</div>
+ <!-- <input id='alertItemBtn' type='button' value='Debug alert feedback' onclick='initiateSpCreation()'>  -->
+<div id='constructRosterDiv'>
+<table width='100%' cellspacing='2' border='0' id="constructRoster"  class="casTableClass">
+		<tr  style="text-align: center">
+			<td class="casTableClassTh">
+			User List:
+			</td>
+			<td class="casTableClassTh" id='fdrOpIdsTh'>FDR OP IDs:
+			</td>
+			<td>
+			</td>
+		</tr>
+		<tr style="vertical-align: top;">
+			<td   width=270>
+			<textarea class='textarea' id='newUserList' rows='4' cols='30' onclick='clearTextBox()' onkeyup='newUserListChange();displayUpdateRoster()'></textarea>
+			</td>
+			<td align=center>
+				<div id='fdrOpIds' ><textarea class='textarea' id='fdrOpIdsTable' rows='4' cols='10' onkeyup='updateFdrOpIds()'  ></textarea></div>
+			</td>
+			<td style='text-align: right;'>
+			
+			</td>
+			<td style="text-align: right; vertical-align: top;">
+			<input type='button' class="button" value="Launch Account Creation" name="readyToLaunchBtn"  id="readyToLaunchBtn" onclick="initiateCasAccountCreation()">
+			</td>
+		</tr>
+		<tr>
+			<td align=center>   
+			<input id='importNames' type='button' class="button" value='Update Roster' onclick='formatTextBox()'/>
+			</td>
+			<td width=140 align=left >
+			<input type='button' value='New/Refresh' class='button' onclick='reloadPage()'/>
+			<br>
+			<br>
+			<form>
+			<input type='checkbox' id='spCheck' onchange='spCheckBoxToggle()'>SpeedPay<br>
+			<input type="radio" name="agentTypeRadio" id="collectionSelected" value="Collection" onclick="agentType()">Collection<br>
+			<input type="radio" name="agentTypeRadio" id="customerServiceSelected" value="CustomerService" onclick="agentType()">Customer Service
+			</form>
+			</td>
+			<td id='agencyTagDiv' width=100>
+			</td>
+			<td style="text-align: right; vertical-align: top;">
+			<div id='displayIframeDiv'>Display CAS Process<input type='checkbox' id='displayIframe' value='' onchange='displayIframeFunction()'></div>
+			<div id='displaySpIeDiv'>Display SP Process<input type='checkbox' id='displaySpIe' value='' onchange='displaySpIeFunction()'></div>
+			</td>
+		</tr>
+	</table>
+</div>
+</br>
+<div id='submitResults' class='casTableClass'> </div>
+<div id='errorStatementDiv' class='casTableClass'></div>
+<div id='finalResult' class='casTableClass'></div>
+</br>
+<table border='0' cellspacing='3' id='userTable'> </table>
+</br>
+<div id='numberOfUsers'></div>
+</br>
+<div id='casTableContainer'><table border='0' cellspacing='3' id='casTable' ></table></div>
+<br>
+<div id='spTableDiv'><table <border='0' cellspacing='3' id='spTable' class='casTableClass'></table></div>
+<div id='iframePlaceHolderDiv'></div>
+
+</div>
+
+<div id='peter'>By Peter <3 </div> 
+
+</body>
+
+</html>
